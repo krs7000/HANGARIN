@@ -8,6 +8,9 @@ SECRET_KEY = os.getenv(
     "django-insecure-r-ml_40k$rtu)3=$2^y$uo+tl^o5=84a*7#7oy#s@ax3dkpf5k",
 )
 DEBUG = os.getenv("DJANGO_DEBUG", "True").lower() == "true"
+GOOGLE_LOGIN_ENABLED = (
+    os.getenv("DJANGO_ENABLE_GOOGLE_LOGIN", "False").lower() == "true"
+)
 ALLOWED_HOSTS = [
     host.strip()
     for host in os.getenv(
@@ -17,7 +20,6 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -25,13 +27,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
     "hangarin",
 ]
+
+if GOOGLE_LOGIN_ENABLED:
+    INSTALLED_APPS += [
+        "django.contrib.sites",
+        "allauth",
+        "allauth.account",
+        "allauth.socialaccount",
+        "allauth.socialaccount.providers.google",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -40,9 +46,11 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "allauth.account.middleware.AccountMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if GOOGLE_LOGIN_ENABLED:
+    MIDDLEWARE.insert(-1, "allauth.account.middleware.AccountMiddleware")
 
 ROOT_URLCONF = "config.urls"
 
@@ -104,24 +112,27 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/login/"
-SITE_ID = int(os.getenv("DJANGO_SITE_ID", "1"))
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_LOGIN_METHODS = {"email", "username"}
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "SCOPE": [
-            "profile",
-            "email",
-        ],
-        "AUTH_PARAMS": {
-            "access_type": "online",
-        },
-        "OAUTH_PKCE_ENABLED": True,
+if GOOGLE_LOGIN_ENABLED:
+    SITE_ID = int(os.getenv("DJANGO_SITE_ID", "1"))
+    AUTHENTICATION_BACKENDS.append(
+        "allauth.account.auth_backends.AuthenticationBackend"
+    )
+    ACCOUNT_EMAIL_VERIFICATION = "none"
+    ACCOUNT_LOGIN_METHODS = {"email", "username"}
+    SOCIALACCOUNT_PROVIDERS = {
+        "google": {
+            "SCOPE": [
+                "profile",
+                "email",
+            ],
+            "AUTH_PARAMS": {
+                "access_type": "online",
+            },
+            "OAUTH_PKCE_ENABLED": True,
+        }
     }
-}

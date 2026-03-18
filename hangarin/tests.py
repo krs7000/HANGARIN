@@ -89,7 +89,10 @@ class DashboardViewTests(TestCase):
         self.assertContains(response, "Enter Dashboard")
         self.assertContains(response, "Continue with Google")
         self.assertContains(response, "Continue with GitHub")
-        self.assertContains(response, "/accounts/google/login/")
+        self.assertContains(
+            response,
+            "Google and GitHub sign-in are disabled until social login is enabled on the server.",
+        )
 
     def test_dashboard_requires_login(self):
         response = self.client.get(reverse("dashboard"))
@@ -108,15 +111,6 @@ class DashboardViewTests(TestCase):
         self.assertContains(response, "Task Status Overview")
         self.assertContains(response, "Latest Task Updates")
         self.assertContains(response, "Launch client dashboard")
-
-    def test_admin_shows_sites_and_social_applications(self):
-        self.client.force_login(self.user)
-
-        response = self.client.get(reverse("admin:index"))
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Sites")
-        self.assertContains(response, "Social applications")
 
     def test_task_workspace_renders_internal_sections_and_filters(self):
         self.client.force_login(self.user)

@@ -72,9 +72,17 @@ python manage.py seed_hangarin
 
 ## Google sign-in setup
 
-Google OAuth is implemented with `django-allauth`.
+Google OAuth support is available, but it is disabled by default so the app can start cleanly on servers that do not have the social-login environment ready yet.
 
-After deploying and running migrations:
+To enable it on a deployed server, set:
+
+```text
+DJANGO_ENABLE_GOOGLE_LOGIN=True
+```
+
+Then run migrations and reload the app.
+
+Once enabled:
 
 1. Open `/admin/`
 2. Open `Sites` and update the default site domain to your live hostname
