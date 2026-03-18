@@ -58,12 +58,16 @@
         <span>OR</span>
       </div>
 
+      {% url 'dashboard' as dashboard_route %}
       <div class="auth-provider-stack">
-        <button type="button" class="provider-button" disabled>Continue with Google</button>
+        <form method="post" action="/accounts/google/login/?next={{ dashboard_route|urlencode }}" class="provider-form">
+          {% csrf_token %}
+          <button type="submit" class="provider-button">Continue with Google</button>
+        </form>
         <button type="button" class="provider-button" disabled>Continue with GitHub</button>
       </div>
 
-      <p class="auth-footnote">Google and GitHub sign-in are visual placeholders until OAuth is configured.</p>
+      <p class="auth-footnote">Google sign-in works after you add a Google Social application in Django admin. GitHub is still a placeholder.</p>
     </div>
   </section>
 </main>

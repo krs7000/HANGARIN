@@ -190,6 +190,10 @@ body.auth-body {
   gap: 0.95rem;
 }
 
+.provider-form {
+  margin: 0;
+}
+
 .provider-button {
   border: 1px solid var(--auth-line-strong);
   color: var(--auth-ink);

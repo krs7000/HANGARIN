@@ -69,3 +69,24 @@ python manage.py seed_hangarin
 ```
 
 `ALLOWED_HOSTS` already accepts `.pythonanywhere.com` by default.
+
+## Google sign-in setup
+
+Google OAuth is implemented with `django-allauth`.
+
+After deploying and running migrations:
+
+1. Open `/admin/`
+2. Open `Sites` and update the default site domain to your live hostname
+3. Open `Social applications`
+4. Add a new social application with:
+   - Provider: `Google`
+   - Name: any label you want, for example `Hangarin Google`
+   - Client id: your Google OAuth client ID
+   - Secret key: your Google OAuth client secret
+   - Sites: attach your current site
+
+Use these Google OAuth redirect URIs:
+
+- `https://your-domain/accounts/google/login/callback/`
+- `http://127.0.0.1:8000/accounts/google/login/callback/`
